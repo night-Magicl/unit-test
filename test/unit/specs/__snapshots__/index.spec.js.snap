@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Index.vue 渲染Index组件 1`] = `
+<div>
+  <div>
+    0
+  </div>
+   
+  <button>
+    加
+  </button>
+   
+  <button>
+    这是一个测试测试测试测试测试
+  </button>
+</div>
+`;

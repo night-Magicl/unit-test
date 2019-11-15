@@ -1,0 +1,43 @@
+						mock
+jest.fn() 一般是作为一个函数内部的回调函数来断言，类似于替换了该回调函数，像是数据请求函数，请求成功的回调即可用jest.fn()来断言，该接口请求是否成功，并且能执行该回调。用来断言外层函数的实现
+	function exam(callBack){
+		callBack()
+	}
+	测试：
+jest.mock() 一般是作为一个函数整体（模仿、映射、复制函数），它包含所模仿函数的所以方法，可以用来断言mock的函数本身，单在执行的时候，内部代码不会执行。
+jest.spyOn() 兼具以上两种函数的作用，且模仿的函数方法内部也会执行
+
+						快照
+	快照一般用于在测试配置文件的时候，因为配置文件一般不经常改动，所以快照在对照原文件的时候就不用总是发生改动报错，并且，因为配置文件中的参数多是不需要改动的，所以直接使用快照就可断言测试，不需要一个个的去断言。
+		例子：配置文件的方法
+export const generateConfig  = () => {
+    return {
+        server: 'http://localhost',
+        port: '8080',
+        time: new Date()
+    }
+}
+		测试用例：
+import { generateConfig } from './snapshot.js'
+test('测试 generateConfig', () => {
+    expect(generateConfig()).toEqual({
+        server: 'http://localhost',
+        port: '8080'
+    })
+})
+		当配置项不断增加的时候，就需要不断去更改测试用例，那么就可用快照的方式写测试用例：
+import { generateConfig } from './snapshot.js'
+ test('测试 generateConfig', () => {
+    expect(generateConfig()).toMatchSnapshot()
+})
+		对于参数中有时间戳这种的不断变化的值时，会导致没错执行测试的时候都会发生快照与实际不匹配问题，解决：
+import { generateConfig } from './snapshot.js'
+test('测试 generateConfig', () => {
+    expect(generateConfig()).toMatchSnapshot({
+        time: expect.any(Date)  // expect.any()的参数为该值的类型，时间就是Date，数值就是Number
+    })
+})
+		
+	在vue组件中有改动的地方时，在执行npm run unit时会报错，（snapshot test failed in 1 test suite）快照不匹配，因为快照文件里的内容没有更新，若确定是正确的改动，那么就执行
+			npm run unit -- -u （去更新快照）
+
